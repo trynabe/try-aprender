@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#101217">
+  <meta name="description" content="Try-Aprender พื้นที่เรียน Computer System, Website Technology, Computer Network, Software Engineer และ Reading Skills พร้อมสรุป แบบฝึกหัด และบันทึกเวลาเรียน">
+  <title>Try-Aprender</title>
+  <link rel="stylesheet" href="assets/study.css?v=6.6">
+  <script defer data-manual src="assets/vendor/prism.min.js"></script>
+  <script defer src="assets/lecture-1.js"></script>
+  <script defer src="assets/lecture-2.js?v=2"></script>
+  <script defer src="assets/lecture-3.js"></script>
+  <script defer src="assets/lecture-4.js?v=2"></script>
+  <script defer src="assets/lecture-5.js?v=2"></script>
+  <script defer src="assets/itds241/course.js?v=2"></script>
+  <script defer src="assets/itds241/lecture-09.js"></script>
+  <script defer src="assets/itds241/lecture-10.js?v=2"></script>
+  <script defer src="assets/itds241/lecture-11.js"></script>
+  <script defer src="assets/itds241/lecture-12.js?v=2"></script>
+  <script defer src="assets/itds241/lecture-13.js?v=2"></script>
+  <script defer src="assets/itds241/lecture-14.js?v=2"></script>
+  <script defer src="assets/itds241/labs.js?v=6.2"></script>
+  <script defer src="assets/itds241/lab-solutions.js?v=5.2"></script>
+  <script defer src="assets/itds231/course.js?v=3"></script>
+  <script defer src="assets/itds231/lecture-08.js?v=2"></script>
+  <script defer src="assets/itds231/lecture-09.js"></script>
+  <script defer src="assets/itds231/lecture-10.js"></script>
+  <script defer src="assets/itds231/lecture-11.js"></script>
+  <script defer src="assets/itds231/lecture-12.js"></script>
+  <script defer src="assets/itds231/lecture-13.js"></script>
+  <script defer src="assets/itds231/lecture-14.js"></script>
+  <script defer src="assets/itds231/lecture-15.js"></script>
+  <script defer src="assets/itds261/course.js"></script>
+  <script defer src="assets/itds261/lecture-08.js"></script>
+  <script defer src="assets/itds261/lecture-09.js"></script>
+  <script defer src="assets/itds261/lecture-10.js"></script>
+  <script defer src="assets/itds261/lecture-11.js"></script>
+  <script defer src="assets/itds261/lecture-12.js"></script>
+  <script defer src="assets/itds261/lecture-13.js"></script>
+  <script defer src="assets/itds261/lecture-14.js"></script>
+  <script defer src="assets/itlg201/sources.js?v=1"></script>
+  <script defer src="assets/itlg201/course.js?v=2"></script>
+  <script defer src="assets/itlg201/lecture-01.js?v=1"></script>
+  <script defer src="assets/itlg201/lecture-02.js?v=1"></script>
+  <script defer src="assets/itlg201/lecture-03.js?v=1"></script>
+  <script defer src="assets/itlg201/lecture-04.js?v=1"></script>
+  <script defer src="assets/itlg201/lecture-05.js?v=1"></script>
+  <script defer src="assets/itlg201/lecture-07.js?v=1"></script>
+  <script defer src="assets/itlg201/lecture-08.js?v=1"></script>
+  <script defer src="assets/itlg201/lecture-11.js?v=1"></script>
+  <script defer src="assets/itlg201/lecture-12.js?v=1"></script>
+  <script defer src="assets/study.js?v=6.7"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">ข้ามไปยังเนื้อหา</a>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#home" aria-label="Try-Aprender หน้าแรก">
+        <span class="brand-mark" aria-hidden="true"><i></i></span>
+        <span class="brand-name">Try-Aprender</span>
+      </a>
+      <div class="topbar-actions">
+        <button type="button" class="toolbar-button menu-trigger" id="open-menu" aria-haspopup="dialog" aria-label="คลังวิชา">
+          <span class="menu-icon" aria-hidden="true"></span><span class="menu-label">คลังวิชา</span>
+        </button>
+        <button type="button" class="toolbar-button search-trigger" id="open-search" aria-haspopup="dialog" aria-label="ค้นหาเนื้อหา">
+          <span class="search-icon" aria-hidden="true"></span>
+          <span class="search-label">ค้นหาเนื้อหา</span>
+          <kbd>Ctrl K</kbd>
+        </button>
+        <button type="button" class="toolbar-button size-trigger" id="font-size" aria-label="ตัวอักษรใหญ่" aria-pressed="false" title="ตัวอักษรใหญ่">Aa</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="study-shell">
+    <aside class="sidebar" aria-label="สารบัญวิชา">
+      <nav id="desktop-chapters" aria-label="บทเรียน"></nav>
+    </aside>
+    <main id="main-content" class="workspace" tabindex="-1">
+      <noscript><p class="empty-state">เปิด JavaScript ในเบราว์เซอร์เพื่ออ่านบทเรียนและค้นหาเนื้อหา</p></noscript>
+    </main>
+  </div>
+
+  <dialog id="search-dialog" class="study-dialog" aria-labelledby="search-title">
+    <form class="dialog-header" method="dialog">
+      <h2 id="search-title">ค้นหาในบทเรียน</h2>
+      <button type="submit" class="toolbar-button">ปิด</button>
+    </form>
+    <div class="search-field">
+      <label class="sr-only" for="query">คำค้น</label>
+      <span class="search-icon" aria-hidden="true"></span>
+      <input id="query" type="search" placeholder="เช่น Round Robin, React หรือ VLAN" autocomplete="off" autofocus>
+    </div>
+    <p id="search-feedback" class="search-feedback" aria-live="polite"></p>
+    <ul id="search-results" class="search-results"></ul>
+  </dialog>
+
+  <dialog id="chapter-menu" class="study-dialog menu-dialog" aria-labelledby="menu-title">
+    <form class="dialog-header" method="dialog">
+      <h2 id="menu-title">คลังวิชา</h2>
+      <button type="submit" class="toolbar-button">ปิด</button>
+    </form>
+    <nav id="mobile-chapters" aria-label="สารบัญวิชา"></nav>
+  </dialog>
+</body>
+</html>

@@ -1,0 +1,120 @@
+(() => {
+  const { addChapter, section, example, quiz } = window.WebTechnology;
+
+  addChapter({
+    number: 12,
+    title: "Web Services",
+    thaiTitle: "HTTP, Browser Storage, JSON, REST และ Fetch",
+    totalPages: 90,
+    summary: "ดูภาพรวมว่า client กับ server แบ่งงานกันอย่างไร จากนั้นอ่าน HTTP และรูปแบบข้อมูลก่อนลงมือออกแบบ resource และเรียกบริการจาก JavaScript",
+    goals: ["แยก tier, request, response และ header สำคัญได้", "เลือก Cookies, localStorage หรือ sessionStorage ตามอายุและวิธีส่ง", "อ่าน JSON และอธิบาย REST constraints, PUT/POST และการเรียก XHR/Fetch ได้"],
+    confusions: ["Layer แบ่งหน้าที่ ส่วน tier แบ่งตำแหน่งหรือส่วนที่นำไปรัน", "JSON เป็นข้อความ ส่วน JavaScript object เป็นค่าที่ใช้ในโปรแกรม", "Content-Type บอกชนิดของ body ที่ส่ง ส่วน Accept บอกชนิดที่ client อยากรับ", "Fetch resolve เมื่อได้ HTTP response แม้ status เป็น 404 ให้ตรวจ response.ok ก่อนอ่าน body"],
+    sections: [
+      section("architecture", "1–11", "Before the Web และ Application Architecture",
+        "ทุกระบบมีหน้าที่แสดงผล ประมวลผลกฎ และจัดเก็บข้อมูล ประเด็นในภาพ 1–N tiers คือหน้าที่เหล่านี้ถูกรันรวมกันหรือแบ่งไปกี่ส่วน",
+        [["1-Tier", "สาม layer อยู่บนเครื่องหรือแพ็กเกจเดียว ภาพให้ dumb terminals กับ mainframe"], ["2-Tier", "client มี presentation คุยกับ server โดยตรง business logic อยู่ได้ทั้งสองฝั่ง"], ["3-Tier / N-Tier", "client → application → database แยกสามชั้น ส่วน N-tier เพิ่ม service หรือ middleware หลายระดับเพื่อกระจายภาระ"]],
+        [
+          example("tiers-diagram", [5, 6, 7, 8, 9, 10, 11], "อ่านภาพ Tier และเว็บแอปที่มีหลายบริการ",
+            "สไลด์ให้ภาพ mainframe, client/server, application server, DB และตัวอย่างสถาปัตยกรรม Easyrec",
+            "จับว่าใครแสดงผล ใครตัดสินตามกฎ และข้อมูลอยู่ตรงไหน",
+            ["1-tier รวมหน้าที่ในระบบเดียว แม้มี terminal แสดงผล", "2-tier ให้ client ติดต่อ database server หรือ server โดยตรง", "3-tier ให้ client ผ่าน application tier ที่อ่าน DB ให้", "ภาพ N-tier และ Easyrec เพิ่มส่วนรับส่ง request ประมวลผลหรือแนะนำข้อมูล และจัดเก็บแยกตามหน้าที่"],
+            "เมื่อแยกส่วนกลางออก client สามารถเปลี่ยน UI ได้ตราบที่สัญญาการเรียกยังตรง",
+            { diagram: ["Presentation / Browser", "Application / Business Logic", "Resource Management / Database"] })
+        ]),
+      section("http", "12–36", "HTTP Messages, Parameters, HTML และ XML",
+        "HTTP เริ่มจาก client ส่ง method, target, headers และ body ตามจำเป็น server ตอบ status, headers และ representation ของ resource",
+        [["Request", "ตัวอย่าง HTTP/1.1 มี request line, header lines และ body หลังบรรทัดว่าง Body อาจไม่มี"], ["Response", "status line บอก version/status ในตัวอย่าง HTTP/1.1 เช่น 200 OK, 404 Not Found และ 500 Internal Server Error"], ["Headers", "Host ระบุปลายทาง, User-Agent ระบุ client, Accept และ Accept-Language ระบุสิ่งที่อยากรับ, Content-Type บอกชนิดข้อมูล, Content-Length นับไบต์, Authorization ส่งข้อมูลยืนยันตัวตน"], ["HTML / XML", "HTML ใช้ markup ที่ browser เข้าใจเพื่อแสดงเอกสาร XML ใช้ element ที่นิยามเองเพื่อบรรยายโครงข้อมูลและตรวจได้ด้วย schema"]],
+        [
+          example("document-exchange", [13, 14, 15, 16], "ดูภาพ Browser ดึงหลาย Resource ผ่าน HTTP",
+            "หน้าเว็บหนึ่งหน้ามี HTML, CSS, JavaScript และวัตถุจากหลาย server ภาพ protocol วาง HTTP เหนือชั้นขนส่ง",
+            "อธิบายว่า URL เดียวในแถบที่อยู่ทำไมตามด้วยหลาย request",
+            ["Browser ขอเอกสารหลัก", "เมื่อ parse HTML พบ link, script และรูป จึงขอ resource ที่อ้างถึงเพิ่ม", "MIME type ใน response ช่วยให้ browser รู้วิธีอ่านเนื้อหาแต่ละชิ้น"],
+            "HTML เป็นเพียงหนึ่ง resource ส่วน HTTP แลกไฟล์ชนิดอื่นได้ และ headers ทำให้เพิ่ม metadata ได้"),
+          example("read-message", [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31], "แยก HTTP Request, Response และค่าจาก Form",
+            "ภาพตัวอย่าง GET / HTTP/1.1 มี Host: developer.mozilla.org และ Accept-Language: fr ส่วนตัวอย่าง response ขึ้น HTTP/1.1 200 OK",
+            "หาว่าแต่ละบรรทัดทำหน้าที่อะไร และค่าจาก form เข้าไปตรงไหน",
+            ["GET / เป็น request line ชี้ method และ resource ส่วน header หลังจากนั้นให้ข้อมูลเพิ่ม", "200 OK เป็น status line ของข้อความตอบ Content-Type ระบุชนิดข้อมูล และ body อยู่หลังบรรทัดว่าง", "GET form ใส่ค่าหลัง ? ใน URL หรือ POST form ส่ง body ในรูปแบบตาม Content-Type"],
+            "อ่าน method และ status คนละทิศ ส่วน Accept-Language เป็นความต้องการภาษา server อาจตอบภาษาอื่นได้",
+            { table: { headers: ["ส่วน", "ตัวอย่าง", "อ่านอย่างไร"], rows: [["Request line", "GET / HTTP/1.1", "ขอ resource /"], ["Request header", "Accept-Language: fr", "อยากได้ภาษาฝรั่งเศส"], ["Status line", "HTTP/1.1 200 OK", "ประมวลผลสำเร็จ"], ["Response header", "Content-Type: text/html", "body เป็น HTML"]] } }),
+          example("xml-tree", [32, 33, 34, 35, 36], "อ่าน XML note และตรวจ university กับ XML Schema",
+            "ตัวอย่างแรกมี root note และ child to, from, heading, body อีกตัวอย่างให้ XSD ของ university",
+            "แยก root/child และตรวจลำดับ element เมื่อเทียบกับ schema",
+            ["XML declaration บอก version/encoding แล้วเปิด root เพียงตัวเดียว", "ใน note อ่าน to=Wud, from=Bell, heading=Reminder และ body เป็นข้อความเตือน", "xs:sequence ของ university กำหนด name → address → city → country และค่าทั้งหมดเป็น string"],
+            "ตัวอย่าง Mahidol ตามลำดับใน schema หากสลับ city กับ country เอกสารยังอาจ well-formed แต่ไม่ valid ตาม schema",
+            { codeLanguage: "markup", code: '<university>\n  <name>Mahidol</name>\n  <address>999 Phuttamonthon 4 Road</address>\n  <city>Nakhon Pathom</city>\n  <country>Thailand</country>\n</university>' })
+        ]),
+      section("browser-storage", "37–44", "Cookies, LocalStorage และ sessionStorage",
+        "เริ่มจากถามว่าค่าต้องติดไปกับ HTTP request หรือใช้เฉพาะหน้าเว็บ แล้วแยกว่าต้องเก็บข้ามแท็บหรือสิ้นอายุเมื่อจบการใช้งานแท็บ",
+        [["Cookies", "ประมาณ 4 KB ต่อ cookie ตามตาราง ใช้กับ session/personalization/tracking ระบบส่ง header ตามเงื่อนไข cookie"], ["localStorage", "แบ่งตาม origin เก็บ string ไว้ข้ามการปิดและเปิดหน้า ตัวเลขประมาณ 5 MB ในสไลด์เป็นค่าคร่าว ๆ"], ["sessionStorage", "แบ่งตาม origin และ session ของแท็บ รีเฟรชปกติยังอยู่ เมื่อปิดแท็บ session จบ"]],
+        [
+          example("cookies-and-storage", [38, 39, 40, 41, 42, 43, 44], "เลือกที่เก็บตะกร้า ชื่อผู้ใช้ และสถานะในแท็บ",
+            "ภาพมี cookie แบบ username พร้อมวันหมดอายุ และตารางเปรียบเทียบการส่งกับพื้นที่เก็บ",
+            "เลือกพื้นที่เก็บตามอายุและผู้ที่ต้องอ่านค่า",
+            ["ถ้า server ต้องรู้ตัวระบุข้าม request ใช้ cookie ที่ตั้งอายุและ scope ตามงาน", "ถ้าเป็นการตั้งค่า UI ที่ต้องอยู่ข้ามการปิดแท็บ ใช้ localStorage.setItem และ getItem ค่าที่เครื่องมือ Browser แสดงเป็น string", "ถ้าต้องการแยกข้อมูลชั่วคราวตามแท็บใช้ sessionStorage เมื่อจบงานเรียก removeItem เฉพาะคีย์"],
+            "การอ่าน localStorage และ sessionStorage ทำใน JavaScript ส่วนค่าไม่ได้ถูกแนบไปกับ HTTP โดยอัตโนมัติ",
+            { code: 'localStorage.setItem("theme", "dark");\nconst theme = localStorage.getItem("theme");\nsessionStorage.setItem("draft", "อยู่ในแท็บนี้");\nlocalStorage.removeItem("theme");' })
+        ]),
+      section("json", "45–54", "JSON และ Serialization",
+        "เมื่อจะส่งหรือเก็บ object ให้ serialize เป็นข้อความก่อน แล้ว parse กลับเป็นข้อมูล JSON รองรับ number, string, boolean, array, object และ null",
+        [["JSON syntax", "key และ string ใช้ double quotes ห้ามใส่ comment, function, undefined หรือ trailing comma"], ["Object / Array", "object อ่านด้วย key ส่วน array อ่านด้วย index ที่เริ่มจาก 0"], ["Stringify / Parse", "JSON.stringify สร้างข้อความ JSON และ JSON.parse อ่านข้อความที่ valid กลับเป็นค่า"]],
+        [
+          example("json-structures", [46, 47, 48, 49, 50, 51, 52, 53, 54], "ไล่ Object Literal, JSON Object, JSON Array และการเก็บใน Storage",
+            "ตัวอย่างมี key wudhichart ที่เก็บข้อมูลคน และ people เป็น array ซึ่งสมาชิกแรกชื่อ Wudhichart สมาชิกถัดไปชื่อ Pawitra",
+            "เข้าถึง age และ firstName พร้อมแปลงข้อมูลไปและกลับจาก localStorage",
+            ["เมื่อย้ายจาก object literal ไป JSON ให้ครอบ key ด้วย double quotes และเอา var ออกหากเป็นเอกสาร JSON", "จาก object ที่ parse แล้วอ่าน wudhichart.age ได้ 30 ส่วน people[1].firstName ได้ Pawitra", "ใช้ JSON.stringify ก่อน setItem และ JSON.parse หลัง getItem ตรวจกรณีไม่มีคีย์หรือ JSON เสียก่อนใช้"],
+            "หลัง parse กลับโครง nested object/array ยังอยู่และอ่านด้วย key หรือ index ได้",
+            { code: 'const record = { people: [{ firstName: "Wudhichart" }, { firstName: "Pawitra" }] };\nlocalStorage.setItem("people-list", JSON.stringify(record));\nconst raw = localStorage.getItem("people-list");\nconst saved = raw ? JSON.parse(raw) : { people: [] };\nconsole.log(saved.people[1]?.firstName);', note: "สไลด์ 51–52 ใช้ var เพื่อแสดงตัวอย่างใน JavaScript ส่วนตัวเอกสาร JSON คือข้อมูลด้านขวาของเครื่องหมายเท่ากับ" })
+        ]),
+      section("rest", "55–76", "Web Services และ REST Architecture",
+        "Web Service ให้โปรแกรมติดต่อกันผ่านเครือข่าย API เป็นคำกว้างกว่านั้น SOAP มี message protocol และ WSDL อธิบาย interface ส่วน REST ให้กฎการออกแบบรอบ resource และ representation",
+        [["Client–server / Stateless", "แยก client/server ให้พัฒนาได้อิสระ และให้แต่ละ request มี context พอต่อการประมวลผล"], ["Cacheable / Layered", "ระบุว่า response เก็บ cache ได้ไหม client ติดต่อ gateway หรือ proxy ได้ผ่าน interface เดียว"], ["Uniform interface", "ระบุ resource ด้วย URI, ใช้ representation, ส่งข้อความที่อธิบายตัวเองได้ และเปิดทางไป action ถัดไปผ่าน hypermedia"], ["Code on demand", "ข้อกำหนดเสริมที่ให้ server ส่ง logic ไปขยายความสามารถของ client"]],
+        [
+          example("custom-search-uri", [66, 67, 68, 69, 70, 71, 72, 73], "แกะ URI ของ Google Custom Search และเลือก PUT/POST",
+            "ตัวอย่าง GET ไปที่ https://www.googleapis.com/customsearch/v1?parameters และตารางเปรียบเทียบ HTTP methods",
+            "แยกเจ้าของ API, ชื่อบริการ, version, parameters และทำนายผลของการส่งคำขอซ้ำ",
+            ["อ่าน host www.googleapis.com แล้วแบ่ง /customsearch/v1 เป็นชื่อ API และ version", "representation ของ resource อาจเป็น JSON หรือ XML โดย Content-Type บอกวิธีอ่าน", "POST ไป collection เมื่อ server เลือก URI ใหม่ ส่วน PUT ระบุ URI เป้าหมายและให้ state ปลายทางเดิมเมื่อส่งค่าเดียวกันซ้ำ"],
+            "GET ตัวอย่างอ่านผลค้นหา PUT ที่กำหนดข้อมูลเดิมซ้ำมี intended effect เดิม ส่วน POST สร้างซ้ำอาจได้คนละ resource"),
+          example("hateoas-code", [74, 75, 76], "ตามลิงก์ Department และอ่านภาพ Code on Demand",
+            "สไลด์ให้ response ของ API departments ที่มีลิงก์ และ response /api/resource มี data กับข้อความ code",
+            "แยกการนำทางจากการเพิ่ม logic ให้ client",
+            ["อ่าน links ใน representation แล้วใช้ rel/href ไปยัง resource ที่ลิงก์ชี้", "gateway จัดการการส่งต่อให้ service โดยคงสัญญาฝั่ง client", "Code on demand ในสไลด์แสดงการส่ง logic จาก server เป็นแนวคิดเสริม ส่วน string code ใน JSON ยังคงเป็นข้อมูลจนกว่า client จะมีกลไกประมวลผลที่ตั้งใจไว้"],
+            "HATEOAS บอกทางไป resource ถัดไป ส่วน Code on demand เป็นอีก constraint ที่ไม่บังคับ")
+        ]),
+      section("request-js", "77–90", "เรียก Web Services ด้วย XMLHttpRequest และ Fetch",
+        "เริ่มจาก URL และ method ส่ง request แล้วอ่าน HTTP status ก่อนใช้ body XHR แจ้งด้วย events ส่วน Fetch ใช้ Promise",
+        [["XHR", "open(method, url, async) ตั้งค่า, send(body) ส่ง, load หมายถึงได้ response, error หมายถึงล้มเหลวด้าน network"], ["XHR response", "status, statusText, response และ responseType เช่น text/json/blob/arraybuffer/document"], ["Fetch", "fetch(url, options) คืน Promise<Response> จากนั้น await res.json(), text(), blob() หรือ arrayBuffer() ตามชนิดผล"]],
+        [
+          example("xhr-progress", [78, 79, 80, 81, 82, 83, 84, 85], "ไล่ XHR จาก readyState 0 ถึง 4",
+            "ตัวอย่างตั้ง open แล้ว send และเลือก responseType เป็น json",
+            "ทำนายว่า callback ไหนใช้กับ HTTP 404 และควรอ่านผลเมื่อใด",
+            ["state 0=UNSENT, 1=OPENED, 2=HEADERS_RECEIVED, 3=LOADING, 4=DONE", "onreadystatechange เรียกทุกครั้งที่ state เปลี่ยน ส่วน load มีเมื่อได้ response ครบ", "แม้ load ทำงาน ให้ตรวจ status ช่วง 2xx ก่อนใช้ response ส่วน error ใช้ตรวจ network failure"],
+            "HTTP 404 ยังเข้า load ได้ แต่ต้องจัดการว่าเป็น HTTP error",
+            { code: 'const xhr = new XMLHttpRequest();\nxhr.open("GET", "/api/items");\nxhr.responseType = "json";\nxhr.onload = () => {\n  if (xhr.status >= 200 && xhr.status < 300) console.log(xhr.response);\n  else console.error(xhr.status);\n};\nxhr.onerror = () => console.error("Network error");\nxhr.send();' }),
+          example("fetch-search", [86, 87, 88, 89], "รับคำค้นจาก #q แล้วแสดง JSON ใน #output",
+            "ฟังก์ชัน getConferenceResponses อ่าน textbox แล้วต่อ URL Custom Search ด้วย key, cx และ q",
+            "ไล่ค่า input, สองขั้นของ Promise และผลที่หน้าเว็บ",
+            ["อ่าน value ของ #q สร้าง query string โดย encode ค่า", "fetch รอ Response แล้วตรวจ ok/status", "await res.json() อ่าน body แล้ว JSON.stringify(data, null, '\\t') จัดย่อหน้า", "แสดงข้อความผ่าน textContent ซึ่งจะแสดงข้อมูลจาก API ตามตัวอักษร และจับข้อผิดพลาด"],
+            "ได้ JSON แสดงใน #output เมื่อ URL, การตั้งค่า API และ response ถูกต้อง จำนวนผลขึ้นกับคำค้นและข้อมูลของบริการ",
+            { note: "สไลด์ต่อสตริงและใส่ innerHTML ในตัวอย่างย่อ ใช้ URLSearchParams และ textContent เพื่อให้ค่าที่มีอักขระพิเศษแสดงตามที่ตั้งใจ" })
+        ])
+    ],
+    exercises: [
+      quiz("q1", [17, 19, 20, 24, 26], "อ่าน Accept และ Content-Type", "client ส่ง Accept: application/json ส่วน response ส่ง Content-Type: text/html ข้อใดอ่านได้ถูกต้อง?",
+        ["body เป็น JSON เพราะ Accept", "body เป็น XML เพราะสถานะไม่ได้ระบุ", "client อยากได้ JSON แต่ response ระบุ HTML", "ทั้งสอง header ต้องเป็นค่าเดียวกันเสมอ"], 2,
+        ["Accept บอกความต้องการของ client", "Content-Type ของ response บอก media type ที่ส่งจริง จึงต้องอ่าน HTML ตาม header"]),
+      quiz("q2", [38, 41, 42, 44], "เลือก Storage ให้คงหลัง Reload ในแท็บเดียว", "ต้องการให้ร่างชั่วคราวต่างกันตามแท็บ รีเฟรชแล้วยังอยู่และหมดเมื่อปิดแท็บ ใช้อะไร?",
+        ["sessionStorage", "localStorage", "cookie อายุ 30 วัน", "ตัวแปร local ในฟังก์ชันอย่างเดียว"], 0,
+        ["sessionStorage แบ่งตาม origin และแท็บ", "รีเฟรชในแท็บเดิมยังมี data ส่วนเมื่อปิดแท็บ session นั้นจบ"]),
+      quiz("q3", [48, 49, 50, 54], "เลือก JSON ที่ parse ได้", "ข้อใดเป็น JSON ที่ valid สำหรับ object ที่มียอดเป็นเลขและ paid เป็น boolean?",
+        ["{total: 3, paid: true}", "{'total': 3, 'paid': true}", '{"total":3,"paid":true,}', '{"total":3,"paid":true}'], 3,
+        ["key ใช้ double quotes", "3 กับ true ไม่ต้องมี quotes และหลัง property สุดท้ายไม่มี comma"]),
+      quiz("q4", [68, 69, 70, 71], "PUT กับ idempotency", "ส่ง PUT /items/42 body เดิมสองครั้ง ข้อใดตรงกับ idempotency?",
+        ["ต้องได้ status เหมือนกันทุกครั้ง", "ผลที่ตั้งใจต่อ resource เหมือนส่งครั้งเดียว", "server ต้องสร้าง id ใหม่ทั้งสองครั้ง", "PUT ต้องไม่มี body"], 1,
+        ["URI /items/42 ระบุ resource เดียว", "ข้อมูลเหมือนเดิมจึงตั้ง resource เป็น state เดิมได้ แม้ status ของสองครั้งอาจต่างกัน"]),
+      quiz("q5", [82, 86, 87, 88], "Fetch ได้ HTTP 404", "fetch('/api/missing') ได้ HTTP 404 ที่ browser รับได้ปกติ โค้ดควรแยกกรณีนี้อย่างไร?",
+        ["ตรวจ response.ok ก่อนใช้ body", "รอให้ fetch reject ทุกครั้งเมื่อ status เป็น 404", "ใช้ response.json() เป็นตัวตรวจว่า status เป็น 2xx", "อ่าน status จาก query string"], 0,
+        ["Fetch resolve เป็น Response เมื่อ server ตอบ HTTP", "response.ok จะเป็น false สำหรับ 404 จึงแยกกรณีนี้ออกจาก network failure ได้"])
+    ],
+    checklist: ["แยก HTTP request line, status line, headers และ body ได้", "เลือก Cookie, localStorage, sessionStorage และแปลง JSON ได้", "อธิบาย REST constraints และตัวอย่าง PUT/POST ได้", "ไล่ XHR events และ Fetch สองขั้นพร้อมรับมือ HTTP error ได้"]
+  });
+})();
