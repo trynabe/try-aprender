@@ -762,7 +762,9 @@
       article.append(points);
     }
     for (const passage of section.passages ?? []) article.append(makeReadingPassage(chapter, passage));
-    if (section.examples.length) {
+    if (section.slideFigures?.length) {
+      article.append(window.makeITDS211SlideGallery(chapter, section, example => makeWorkedCard(chapter, example)));
+    } else if (section.examples.length) {
       const examples = element("div", "example-list");
       examples.append(element("h3", "", section.pdf ? "ตัวอย่างและโจทย์" : "ตัวอย่างจากสไลด์"));
       for (const example of section.examples) examples.append(makeWorkedCard(chapter, example));
@@ -1287,7 +1289,9 @@
     if (chapter.checklist?.length) registerSearch(chapter, reviewTopic, breadcrumb, chapter.checklist);
     for (const section of chapter.sections) {
       const range = sourceLabel(section.pages, chapter, section.pdf);
-      registerSearch(chapter, section, breadcrumb + " · " + range, [section.summary, ...section.points.flat()]);
+      registerSearch(chapter, section, breadcrumb + " · " + range, [
+        section.summary, ...section.points.flat(), ...(section.slideFigures ?? []).map(figure => figure.caption)
+      ]);
       for (const example of section.examples) {
         const record = [
           example.prompt, example.task, example.codePrompt, ...example.steps, example.answer, example.note, example.code,
